@@ -9,24 +9,34 @@ import SwiftUI
 
 struct ContentView: View {
     
+    //MARK: Properties
     @State private var checkAmout = 0.0
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
     
     @FocusState private var amountIsFocused: Bool
-    
-    let tipPercentages = [10, 15, 20, 0]
-    
+        
     var totalPerPerson: Double {
         let peopleNumber = Double(numberOfPeople + 2)
         let selectedTip = Double(tipPercentage)
         
         let tipvalue = checkAmout/100 * selectedTip
         let grandTotal = checkAmout + tipvalue
+        
         let tipPerPerson = grandTotal / peopleNumber
         return tipPerPerson
     }
     
+    var totalAmount: Double {
+        let selectedTip = Double(tipPercentage)
+        
+        let tipvalue = checkAmout/100 * selectedTip
+        let grandTotal = checkAmout + tipvalue
+        
+        return grandTotal
+    }
+    
+    //MARK: - Body
     var body: some View {
         NavigationView {
             Form {
@@ -44,17 +54,24 @@ struct ContentView: View {
                 
                 Section {
                     Picker("Tip percentage", selection: $tipPercentage) {
-                        ForEach(tipPercentages, id: \.self) {
+                        ForEach(0..<101) {
                             Text($0, format: .percent)
                         }
                     }
-                    .pickerStyle(.segmented)
                 } header: {
                     Text("How much tip do you want to leave?")
                 }
                 
                 Section {
+                    Text(totalAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                } header: {
+                    Text("Total Amount for the Check")
+                }
+                
+                Section {
                     Text(totalPerPerson, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                } header: {
+                    Text("Amount Per Person")
                 }
             }
             .navigationTitle("Splitty")
